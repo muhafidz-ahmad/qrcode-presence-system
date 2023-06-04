@@ -6,6 +6,8 @@ import xlwings as xw
 import generate_qr_code
 import scan_qr_code
 
+from streamlit_qrcode_scanner import qrcode_scanner
+
 # read and prepare the data
 wb = xw.Book('data.xlsx')
 worksheet = wb.sheets('Sheet1');
@@ -29,7 +31,10 @@ with scan:
         st.write("Press \"q\" to stop the camera.")
 
         # Panggil fungsi scan_qr_code untuk memulai pemindaian
-        scan_qr_code.scan_qr_code(wb, worksheet, peserta)
+        # scan_qr_code.scan_qr_code(wb, worksheet, peserta)
+        qr_code = qrcode_scanner()  
+        if qr_code:  
+            st.write(qr_code)
 
 with generate:
     "# Generate New QR Code"
