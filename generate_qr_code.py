@@ -1,8 +1,8 @@
 import qrcode
-
 import streamlit as st
 
-def generate_qr_code(data, filename):
+
+def generate_qr_code(data, file_name):
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_H,
@@ -13,5 +13,4 @@ def generate_qr_code(data, filename):
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
-    # img.save(filename)
     return img
