@@ -19,30 +19,46 @@ scan, generate, stop = st.tabs(["Scan QR Code", "Generate QR Code", "Stop the Pr
 
 with stop:
     if st.button("Stop the Program"):
-        st.write("Program stopped")
+        st.success("Program stopped")
         st.stop()
 
 with scan:
     "# Scan QR Code"
     if st.checkbox("Open Camera"):
         # Panggil fungsi scan_qr_code untuk memulai pemindaian
-        scan_streamlit.scan(wb, worksheet, peserta)
+        scan_streamlit.scan(worksheet, peserta)
 
 with generate:
     "# Generate New QR Code"
     # Data yang ingin diubah menjadi QR Code
     nama = st.text_input("Write you name", "")
 
-    if st.button("Generate QR Code"):
-        # Contoh penggunaan
-        filename = nama + ".png"  # Nama file untuk menyimpan QR Code
+    generate, delete = st.columns(2)
 
-        img = generate_qr_code.generate_qr_code(nama, filename)
-        img.save("qrcode/" + filename)
+    with generate:
+        if st.button("Sign Up and Generate QR Code"):
+            # Tulis data ke excel
+            if nama not in peserta:
+                filename = nama + ".png"  # Nama file untuk menyimpan QR Code
 
-        # Tulis data ke excel
-        total_peserta += 1
-        worksheet["A" + str(total_peserta + 1)].value = nama
+                # Generate QR Code
+                img = generate_qr_code.generate_qr_code(nama, filename)
+                img.save("qrcode/" + filename)
 
-        st.write("QR Code {filename} telah dibuat: ")
-        st.image("qrcode/" + filename, caption=filename)
+                total_peserta += 1
+                worksheet["A" + str(total_peserta + 1)].value = nama
+
+                st.success(f"{nama} berhasil terdaftar")
+                st.image("qrcode/" + filename, caption=filename)
+            else:
+                st.warning(f"{nama} sudah terdaftar")
+
+    with delete:
+        if st.button("Delete Name"):
+            row = str(peserta.index(nama) + 2)
+            for col in ('A', 'B', 'C'):
+                worksheet.range(col + row).delete(shift='up')
+            peserta.remove(nama)
+            total_peserta -= 1
+
+            st.success(nama + " berhasil dihapus.")

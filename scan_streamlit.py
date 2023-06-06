@@ -5,25 +5,26 @@ import xlwings as xw
 from datetime import datetime
 
 
-def scan(wb, worksheet, peserta):
-    data = qrcode_scanner(key="qrcode_scanner")
-    if data:
+def scan(worksheet, peserta):
+    nama = qrcode_scanner(key="qrcode_scanner")
+    if nama:
         try:
-            id = peserta.index(data)
+            id = peserta.index(nama)
 
             now = datetime.now()
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
             if worksheet["B" + str(2 + id)].value == "HADIR":
-                st.write(
-                    data
-                    + " -- SUDAH HADIR PADA -- "
+                st.warning(
+                    nama
+                    + " -- SUDAH HADIR SEJAK -- "
                     + str(worksheet["C" + str(2 + id)].value)
                 )
             else:
                 worksheet["B" + str(2 + id)].value = "HADIR"
                 worksheet["C" + str(2 + id)].value = dt_string
-                st.write(data + " -- HADIR --" + dt_string)
+                st.success(" " + nama + " -- HADIR --" + dt_string,
+                           icon='✅')
 
         except:
-            st.write(data + " -- TIDAK TERDAFTAR --")
+            st.error(" " + nama + " -- TIDAK TERDAFTAR", icon='🚨')
